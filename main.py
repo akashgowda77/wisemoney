@@ -7,6 +7,7 @@ from expense import router as expense_router
 from wallet import router as wallet_router
 from fastapi.security import OAuth2PasswordBearer
 from report import router as report_router
+from nlp_engine import router as nlp_router
 
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
@@ -32,3 +33,5 @@ app.include_router(expense_router, prefix="/expense", tags=["Expense"])
 app.include_router(wallet_router, prefix="/wallet", tags=["Wallet"])
 
 app.include_router(report_router, prefix="/report", tags=["Report"])
+
+app.include_router(nlp_router, prefix="/nlp", tags=["NLP"])

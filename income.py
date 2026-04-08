@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from auth import get_current_user
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
@@ -13,6 +14,7 @@ class IncomeCreate(BaseModel):
     amount: float
     source: str
     date: datetime = datetime.utcnow()
+    wallet_id: int = None
 
 class IncomeResponse(BaseModel):
     id: int
@@ -20,36 +22,12 @@ class IncomeResponse(BaseModel):
     source: str
     date: datetime
     user_id: int
+    wallet_id: int = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 router = APIRouter()
-
-# Dependency: get current user from JWT
-def get_current_user(token: str = Depends(lambda: None), db: Session = Depends(get_db)):
-    from fastapi import Request
-    from fastapi.security import OAuth2PasswordBearer
-
-    oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-    token = oauth2_scheme(Request)
-    
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-    user = db.query(User).filter(User.email == email).first()
-    if user is None:
-        raise credentials_exception
-    return user
 
 # Create new income
 @router.post("/", response_model=IncomeResponse)
@@ -58,9 +36,20 @@ def create_income(income: IncomeCreate, db: Session = Depends(get_db), current_u
         amount=income.amount,
         source=income.source,
         date=income.date,
-        user_id=current_user.id
+        user_id=current_user.id,
+        wallet_id=income.wallet_id
     )
     db.add(new_income)
+    
+    # Update wallet balance if wallet_id is provided
+    if income.wallet_id:
+        from models import Wallet
+        wallet = db.query(Wallet).filter(Wallet.id == income.wallet_id, Wallet.user_id == current_user.id).first()
+        if wallet:
+            wallet.balance += income.amount
+        else:
+            raise HTTPException(status_code=404, detail="Wallet not found")
+
     db.commit()
     db.refresh(new_income)
     return new_income

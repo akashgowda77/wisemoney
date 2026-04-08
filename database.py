@@ -3,8 +3,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Load variables from .env
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./wisemoney.db")  # fallback to SQLite
+load_dotenv()
+DATABASE_URL = "sqlite:///./wisemoney_fixed.db" # Force new DB for debugging
 
 # SQLAlchemy engine
 engine = create_engine(

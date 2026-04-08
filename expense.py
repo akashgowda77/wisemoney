@@ -14,6 +14,7 @@ class ExpenseCreate(BaseModel):
     amount: float
     category: str
     date: datetime = datetime.utcnow()
+    wallet_id: int = None
 
 class ExpenseResponse(BaseModel):
     id: int
@@ -21,32 +22,15 @@ class ExpenseResponse(BaseModel):
     category: str
     date: datetime
     user_id: int
+    wallet_id: int = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-
-# Get current user from JWT
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-    user = db.query(User).filter(User.email == email).first()
-    if user is None:
-        raise credentials_exception
-    return user
+# Get current user
+from auth import get_current_user
 
 # Create expense
 @router.post("/", response_model=ExpenseResponse)
@@ -55,9 +39,20 @@ def create_expense(expense: ExpenseCreate, db: Session = Depends(get_db), curren
         amount=expense.amount,
         category=expense.category,
         date=expense.date,
-        user_id=current_user.id
+        user_id=current_user.id,
+        wallet_id=expense.wallet_id
     )
     db.add(new_expense)
+    
+    # Update wallet balance if wallet_id is provided
+    if expense.wallet_id:
+        from models import Wallet
+        wallet = db.query(Wallet).filter(Wallet.id == expense.wallet_id, Wallet.user_id == current_user.id).first()
+        if wallet:
+            wallet.balance -= expense.amount
+        else:
+            raise HTTPException(status_code=404, detail="Wallet not found")
+
     db.commit()
     db.refresh(new_expense)
     return new_expense
