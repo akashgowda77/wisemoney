@@ -3,11 +3,12 @@ from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
 from database import SessionLocal
-from models import Expense, User
+from models import Expense, User, Transaction
 from auth import get_db, SECRET_KEY, ALGORITHM
 from jose import jwt, JWTError
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer
+import transaction
 
 # Pydantic schema
 class ExpenseCreate(BaseModel):
@@ -44,6 +45,16 @@ def create_expense(expense: ExpenseCreate, db: Session = Depends(get_db), curren
     )
     db.add(new_expense)
     
+    transaction = Transaction(
+        amount=expense.amount,
+        transaction_type="expense",
+        category=expense.category,
+        description=f"Expense - {expense.category}",
+        wallet_id=expense.wallet_id,
+        user_id=current_user.id
+    )
+
+    db.add(transaction)
     # Update wallet balance if wallet_id is provided
     if expense.wallet_id:
         from models import Wallet
