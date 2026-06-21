@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from auth import get_db, get_current_user
-from models import User, Income, Expense, Wallet, Goal
+from models import User, Transaction, Wallet, Goal
 
 router = APIRouter()
 
@@ -14,18 +14,24 @@ def financial_advisor(
 ):
     # Income
     total_income = (
-        db.query(func.sum(Income.amount))
-        .filter(Income.user_id == current_user.id)
+        db.query(func.sum(Transaction.amount))
+        .filter(
+            Transaction.user_id == current_user.id,
+            Transaction.transaction_type == "income"
+        )
         .scalar()
         or 0
     )
 
     # Expense
     total_expense = (
-        db.query(func.sum(Expense.amount))
-        .filter(Expense.user_id == current_user.id)
+        db.query(func.sum(Transaction.amount))
+        .filter(
+            Transaction.user_id == current_user.id,
+            Transaction.transaction_type == "expense"
+        )
         .scalar()
-        or 0
+    or 0
     )
 
     # Wallet Balance
@@ -73,11 +79,14 @@ def financial_advisor(
     # Spending Insights
     category_expenses = (
         db.query(
-            Expense.category,
-            func.sum(Expense.amount).label("total")
+            Transaction.category,
+            func.sum(Transaction.amount).label("total")
         )
-        .filter(Expense.user_id == current_user.id)
-        .group_by(Expense.category)
+        .filter(
+            Transaction.user_id == current_user.id,
+            Transaction.transaction_type == "expense"
+        )
+        .group_by(Transaction.category)
         .all()
     )
 
@@ -97,6 +106,24 @@ def financial_advisor(
     goal_data = []
 
     for goal in goals:
+        monthly_surplus = max(
+        total_income - total_expense,
+        0
+        )
+
+        remaining_amount = (
+            goal.target_amount -
+            goal.current_savings
+        )
+
+        if monthly_surplus > 0:
+            months_to_goal = round(
+                remaining_amount /
+                monthly_surplus,
+                1
+            )
+        else:
+            months_to_goal = None
 
         progress = (
             goal.current_savings
@@ -105,13 +132,20 @@ def financial_advisor(
 
         goal_data.append({
             "goal": goal.goal_name,
-            "progress": round(progress, 2)
+            "progress": round(progress, 2),
+            "remaining_amount": remaining_amount,
+            "estimated_months": months_to_goal
         })
 
         if progress < 50:
             recommendations.append(
                 f"Goal '{goal.goal_name}' is below 50% completion. Consider allocating more monthly savings."
             )
+        if months_to_goal and months_to_goal > 12:
+            recommendations.append(
+                f"At the current savings rate, '{goal.goal_name}' may take more than a year. Consider increasing monthly savings."
+            )
+        
 
     # Emergency Fund Check
     if wallet_balance < (total_expense * 3):
