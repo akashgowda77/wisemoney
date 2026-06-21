@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from auth import get_db, get_current_user
-from models import Expense, User
+from models import Transaction, User
 
 router = APIRouter()
 
@@ -14,11 +14,14 @@ def spending_insights(
 ):
     expenses = (
         db.query(
-            Expense.category,
-            func.sum(Expense.amount).label("total")
+            Transaction.category,
+            func.sum(Transaction.amount).label("total")
         )
-        .filter(Expense.user_id == current_user.id)
-        .group_by(Expense.category)
+        .filter(
+            Transaction.user_id == current_user.id,
+            Transaction.transaction_type == "expense"
+        )
+        .group_by(Transaction.category)
         .all()
     )
 
@@ -33,8 +36,10 @@ def spending_insights(
 
     return {
         "top_category": top_category.category,
-        "amount_spent": top_category.total,
+        "amount_spent": round(top_category.total, 2),
         "percentage": percentage,
         "insight":
-            f"{top_category.category} accounts for {percentage}% of your total spending."
+            f"{top_category.category} accounts for {percentage}% of your total spending.",
+        "recommendation":
+            f"Consider reducing {top_category.category} expenses by 10-15% to improve savings."
     }
