@@ -8,6 +8,8 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 import os
+from fastapi import Form
+from fastapi.security import OAuth2PasswordRequestForm
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -65,12 +67,33 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return {"message": "User registered successfully"}
 
 @router.post("/login")
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user or not verify_password(user.password, db_user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    access_token = create_access_token({"sub": db_user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
+def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    db_user = (
+        db.query(User)
+        .filter(User.email == form_data.username)
+        .first()
+    )
+
+    if not db_user or not verify_password(
+        form_data.password,
+        db_user.password_hash
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid credentials"
+        )
+
+    access_token = create_access_token(
+        {"sub": db_user.email}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
