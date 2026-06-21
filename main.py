@@ -11,6 +11,7 @@ from nlp_engine import router as nlp_router
 from fastapi.middleware.cors import CORSMiddleware
 from dashboard import router as dashboard_router
 from budget import router as budget_router
+from anomaly import router as anomaly_router
 
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
@@ -60,4 +61,10 @@ app.include_router(
     budget_router,
     prefix="/budget",
     tags=["Budget"]
+)
+
+app.include_router(
+    anomaly_router,
+    prefix="/anomaly",
+    tags=["Anomaly Detection"]
 )
