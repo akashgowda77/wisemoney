@@ -66,5 +66,5 @@ app.include_router(
 app.include_router(
     anomaly_router,
     prefix="/anomaly",
-    tags=["Anomaly Detection"]
+    tags=["Anomaly-Detection"]
 )
