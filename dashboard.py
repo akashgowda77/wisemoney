@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from auth import get_db, get_current_user
-from models import Income, Expense, Wallet, User
+from models import Transaction, Wallet, User
 
 router = APIRouter()
 
@@ -13,18 +13,25 @@ def get_dashboard(
     current_user: User = Depends(get_current_user)
 ):
     total_income = (
-        db.query(func.sum(Income.amount))
-        .filter(Income.user_id == current_user.id)
+        db.query(func.sum(Transaction.amount))
+        .filter(
+            Transaction.user_id == current_user.id,
+            Transaction.transaction_type == "income"
+        )
         .scalar()
         or 0
     )
 
     total_expense = (
-        db.query(func.sum(Expense.amount))
-        .filter(Expense.user_id == current_user.id)
+        db.query(func.sum(Transaction.amount))
+        .filter(
+            Transaction.user_id == current_user.id,
+            Transaction.transaction_type == "expense"
+        )
         .scalar()
         or 0
     )
+
 
     total_wallet_balance = (
         db.query(func.sum(Wallet.balance))
@@ -48,18 +55,24 @@ def get_financial_score(
     current_user: User = Depends(get_current_user)
 ):
     total_income = (
-        db.query(func.sum(Income.amount))
-        .filter(Income.user_id == current_user.id)
-        .scalar()
-        or 0
+    db.query(func.sum(Transaction.amount))
+    .filter(
+        Transaction.user_id == current_user.id,
+        Transaction.transaction_type == "income"
     )
+    .scalar()
+    or 0
+)
 
     total_expense = (
-        db.query(func.sum(Expense.amount))
-        .filter(Expense.user_id == current_user.id)
-        .scalar()
-        or 0
+    db.query(func.sum(Transaction.amount))
+    .filter(
+        Transaction.user_id == current_user.id,
+        Transaction.transaction_type == "expense"
     )
+    .scalar()
+    or 0
+)
 
     if total_income == 0:
         return {
