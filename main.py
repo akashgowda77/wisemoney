@@ -15,7 +15,15 @@ from anomaly import router as anomaly_router
 from insights import router as insights_router
 from goals import router as goals_router
 from advisor import router as advisor_router
-
+from models import (
+    User,
+    Income,
+    Expense,
+    Wallet,
+    Goal,
+    Transaction
+)
+from transaction import router as transaction_router
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
 
@@ -88,4 +96,10 @@ app.include_router(
     advisor_router,
     prefix="/advisor",
     tags=["AI Financial Advisor"]
+)
+
+app.include_router(
+    transaction_router,
+    prefix="/transactions",
+    tags=["Transactions"]
 )
