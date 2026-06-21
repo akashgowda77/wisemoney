@@ -14,6 +14,7 @@ from budget import router as budget_router
 from anomaly import router as anomaly_router
 from insights import router as insights_router
 from goals import router as goals_router
+from advisor import router as advisor_router
 
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
@@ -81,4 +82,10 @@ app.include_router(
     goals_router,
     prefix="/goals",
     tags=["Goal Tracking"]
+)
+
+app.include_router(
+    advisor_router,
+    prefix="/advisor",
+    tags=["AI Financial Advisor"]
 )
