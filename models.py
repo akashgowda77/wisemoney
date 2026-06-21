@@ -1,7 +1,45 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from database import Base
 
+from datetime import datetime
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    amount = Column(Float, nullable=False)
+
+    transaction_type = Column(
+        String,
+        nullable=False
+    )  # income | expense
+
+    category = Column(
+        String,
+        nullable=True
+    )
+
+    description = Column(
+        String,
+        nullable=True
+    )
+
+    date = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
+
+    wallet_id = Column(
+        Integer,
+        ForeignKey("wallets.id")
+    )
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id")
+    )
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
@@ -44,3 +82,14 @@ class Expense(Base):
     date = Column(Date)
     user = relationship("User", back_populates="expenses")
     wallet = relationship("Wallet", back_populates="expenses")
+
+class Goal(Base):
+    __tablename__ = "goals"
+
+    id = Column(Integer, primary_key=True, index=True)
+    goal_name = Column(String, nullable=False)
+    target_amount = Column(Float, nullable=False)
+    current_savings = Column(Float, default=0)
+    target_date = Column(DateTime, nullable=True)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
