@@ -8,11 +8,9 @@ from wallet import router as wallet_router
 from fastapi.security import OAuth2PasswordBearer
 from report import router as report_router
 from nlp_engine import router as nlp_router
-<<<<<<< HEAD
 from fastapi.middleware.cors import CORSMiddleware
 from dashboard import router as dashboard_router
-=======
->>>>>>> 1f644a86d8fc830f3a1f4390faee4beb1f3fb0d9
+from budget import router as budget_router
 
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
@@ -23,7 +21,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-<<<<<<< HEAD
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -35,8 +32,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-=======
->>>>>>> 1f644a86d8fc830f3a1f4390faee4beb1f3fb0d9
 # Root route
 @app.get("/")
 def root():
@@ -53,7 +48,6 @@ app.include_router(wallet_router, prefix="/wallet", tags=["Wallet"])
 
 app.include_router(report_router, prefix="/report", tags=["Report"])
 
-<<<<<<< HEAD
 app.include_router(nlp_router, prefix="/nlp", tags=["NLP"])
 
 app.include_router(
@@ -62,6 +56,8 @@ app.include_router(
     tags=["Dashboard"]
 )
 
-=======
-app.include_router(nlp_router, prefix="/nlp", tags=["NLP"])
->>>>>>> 1f644a86d8fc830f3a1f4390faee4beb1f3fb0d9
+app.include_router(
+    budget_router,
+    prefix="/budget",
+    tags=["Budget"]
+)
