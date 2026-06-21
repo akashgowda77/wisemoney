@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dashboard import router as dashboard_router
 from budget import router as budget_router
 from anomaly import router as anomaly_router
+from insights import router as insights_router
 
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
@@ -67,4 +68,10 @@ app.include_router(
     anomaly_router,
     prefix="/anomaly",
     tags=["Anomaly-Detection"]
+)
+
+app.include_router(
+    insights_router,
+    prefix="/insights",
+    tags=["AI Insights"]
 )
