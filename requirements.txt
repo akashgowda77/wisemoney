@@ -1,0 +1,18 @@
+﻿
+fastapi
+uvicorn
+sqlalchemy
+pydantic>=2.0.0
+python-jose[cryptography]
+passlib[bcrypt]
+requests
+pandas
+# Force newer streamlit for Python 3.13 support (imghdr fix)
+streamlit>=1.40.0
+matplotlib
+scikit-learn
+python-multipart
+# Force newer altair compatible with newer streamlit
+altair>=5.0.0
+gunicorn==21.2.0
+python-dotenv==1.0.1
