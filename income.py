@@ -4,10 +4,11 @@ from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
 from database import SessionLocal
-from models import Income, User
+from models import Income, User, Transaction
 from auth import get_db, create_access_token, SECRET_KEY, ALGORITHM
 from jose import jwt, JWTError
 from pydantic import BaseModel
+import transaction
 
 # Pydantic schema
 class IncomeCreate(BaseModel):
@@ -40,6 +41,17 @@ def create_income(income: IncomeCreate, db: Session = Depends(get_db), current_u
         wallet_id=income.wallet_id
     )
     db.add(new_income)
+    
+    transaction = Transaction(
+        amount=income.amount,
+        transaction_type="income",
+        category=income.source,
+        description=f"Income from {income.source}",
+        wallet_id=income.wallet_id,
+        user_id=current_user.id
+    )
+
+    db.add(transaction)
     
     # Update wallet balance if wallet_id is provided
     if income.wallet_id:
