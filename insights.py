@@ -43,3 +43,29 @@ def spending_insights(
         "recommendation":
             f"Consider reducing {top_category.category} expenses by 10-15% to improve savings."
     }
+
+@router.get("/categories")
+def expense_categories(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    expenses = (
+        db.query(
+            Transaction.category,
+            func.sum(Transaction.amount).label("total")
+        )
+        .filter(
+            Transaction.user_id == current_user.id,
+            Transaction.transaction_type == "expense"
+        )
+        .group_by(Transaction.category)
+        .all()
+    )
+
+    return [
+        {
+            "category": x.category,
+            "total": float(x.total)
+        }
+        for x in expenses
+    ]
