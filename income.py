@@ -33,9 +33,11 @@ router = APIRouter()
 # Create new income
 @router.post("/", response_model=IncomeResponse)
 def create_income(income: IncomeCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    
+    source = income.source.strip().title()
     new_income = Income(
         amount=income.amount,
-        source=income.source,
+        source=source,
         date=income.date,
         user_id=current_user.id,
         wallet_id=income.wallet_id
@@ -45,8 +47,8 @@ def create_income(income: IncomeCreate, db: Session = Depends(get_db), current_u
     transaction = Transaction(
         amount=income.amount,
         transaction_type="income",
-        category=income.source,
-        description=f"Income from {income.source}",
+        category=source,
+        description=f"Income from {source}",
         wallet_id=income.wallet_id,
         user_id=current_user.id
     )
