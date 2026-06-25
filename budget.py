@@ -1,16 +1,11 @@
 """
 WiseMoney Budget Intelligence Module
 
-Purpose:
-- Budget CRUD Operations
-- Budget Recommendations
-- Budget Health Analysis
-
-Features:
-- Dynamic Budget Recommendations
-- Spending Distribution Analysis
-- Budget Health Score
-- Budget Risk Detection
+Responsibilities
+----------------
+• Include Budget CRUD Router
+• Budget Recommendations
+• Budget Health Analysis
 """
 
 from fastapi import APIRouter, Depends
@@ -18,6 +13,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from auth import get_db, get_current_user
+
 from models import (
     Transaction,
     Budget,
@@ -25,52 +21,64 @@ from models import (
     User
 )
 
-from budget_module import router as budget_crud_router
+# Import CRUD router
+from budget_crud import router as budget_crud_router
 
 router = APIRouter()
 
-# --------------------------------------------------
-# Include Budget CRUD Endpoints
-# --------------------------------------------------
-
-router.include_router(budget_crud_router)
-
-
-# ==================================================
-# Budget Recommendations
-# ==================================================
+# ==========================================================
+# Budget Recommendation
+# ==========================================================
 
 @router.get("/recommendation")
 def budget_recommendation(
+
     db: Session = Depends(get_db),
+
     current_user: User = Depends(get_current_user)
+
 ):
-    """
-    Generates intelligent budget recommendations
-    based on spending distribution.
-    """
 
     expenses = (
+
         db.query(
+
             Transaction.category,
+
             func.sum(Transaction.amount).label("total")
+
         )
+
         .filter(
+
             Transaction.user_id == current_user.id,
+
             Transaction.transaction_type == "expense"
+
         )
+
         .group_by(Transaction.category)
+
         .all()
+
     )
 
     if not expenses:
+
         return {
-            "message": "No expense data available"
+
+            "total_spending": 0,
+
+            "recommended_budget": {}
+
         }
 
     total_spending = sum(
-        expense.total
-        for expense in expenses
+
+        row.total
+
+        for row in expenses
+
     )
 
     recommendations = {}
@@ -80,192 +88,232 @@ def budget_recommendation(
         percentage = 0
 
         if total_spending > 0:
-            percentage = (
-                amount / total_spending
-            ) * 100
 
-        # ----------------------------------
-        # Risk Detection
-        # ----------------------------------
+            percentage = (
+
+                amount /
+
+                total_spending
+
+            ) * 100
 
         if percentage >= 40:
 
-            risk_level = "High"
+            risk = "High"
 
-            recommended_budget = amount * 0.85
-
-            recommendations[category] = {
-                "current_spending": round(amount, 2),
-                "spending_percentage": round(
-                    percentage,
-                    2
-                ),
-                "risk_level": risk_level,
-                "recommended_budget": round(
-                    recommended_budget,
-                    2
-                ),
-                "suggested_reduction": round(
-                    amount - recommended_budget,
-                    2
-                )
-            }
+            recommended = amount * 0.85
 
         elif percentage >= 20:
 
-            risk_level = "Medium"
+            risk = "Medium"
 
-            recommended_budget = amount * 0.95
-
-            recommendations[category] = {
-                "current_spending": round(amount, 2),
-                "spending_percentage": round(
-                    percentage,
-                    2
-                ),
-                "risk_level": risk_level,
-                "recommended_budget": round(
-                    recommended_budget,
-                    2
-                ),
-                "suggested_reduction": round(
-                    amount - recommended_budget,
-                    2
-                )
-            }
+            recommended = amount * 0.95
 
         else:
 
-            risk_level = "Low"
+            risk = "Low"
 
-            recommendations[category] = {
-                "current_spending": round(amount, 2),
-                "spending_percentage": round(
-                    percentage,
+            recommended = amount
+
+        recommendations[category] = {
+
+            "current_spending":
+
+                round(amount, 2),
+
+            "spending_percentage":
+
+                round(percentage, 2),
+
+            "risk_level":
+
+                risk,
+
+            "recommended_budget":
+
+                round(recommended, 2),
+
+            "suggested_reduction":
+
+                round(
+
+                    amount - recommended,
+
                     2
-                ),
-                "risk_level": risk_level,
-                "recommended_budget": round(
-                    amount,
-                    2
-                ),
-                "suggested_reduction": 0
-            }
+
+                )
+
+        }
 
     return {
-        "total_spending": round(
-            total_spending,
-            2
-        ),
-        "recommended_budget": recommendations
+
+        "total_spending":
+
+            round(total_spending, 2),
+
+        "recommended_budget":
+
+            recommendations
+
     }
 
-
-# ==================================================
-# Budget Health Score
-# ==================================================
+# ==========================================================
+# Budget Health
+# ==========================================================
 
 @router.get("/health")
 def budget_health(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Calculates budget discipline score.
 
-    Score Range:
-    0 - 100
-    """
+    db: Session = Depends(get_db),
+
+    current_user: User = Depends(get_current_user)
+
+):
 
     budgets = (
+
         db.query(Budget)
+
         .filter(
             Budget.user_id == current_user.id
         )
+
         .all()
+
     )
 
     if not budgets:
+
         return {
-            "message": "No budgets created yet"
+
+            "budget_health_score": 0,
+
+            "status": "No Budgets",
+
+            "total_categories": 0,
+
+            "breached_categories": 0,
+
+            "budget_details": []
+
         }
 
-    breached_categories = 0
+    breached = 0
 
-    budget_details = []
+    details = []
 
     for budget in budgets:
 
         spent = (
+
             db.query(
                 func.sum(Expense.amount)
             )
+
             .filter(
+
                 Expense.user_id == current_user.id,
+
                 Expense.category == budget.category
+
             )
+
             .scalar()
+
             or 0
+
         )
 
         utilization = 0
 
         if budget.monthly_limit > 0:
-            utilization = (
-                spent /
-                budget.monthly_limit
-            ) * 100
+
+            utilization = round(
+
+                (spent / budget.monthly_limit) * 100,
+
+                2
+
+            )
 
         if spent > budget.monthly_limit:
-            breached_categories += 1
 
-        budget_details.append({
+            breached += 1
+
+        details.append({
+
             "category": budget.category,
+
             "limit": round(
                 budget.monthly_limit,
                 2
             ),
+
             "spent": round(
                 spent,
                 2
             ),
-            "utilization": round(
-                utilization,
-                2
-            )
+
+            "utilization": utilization
+
         })
 
-    health_score = max(
-        0,
-        round(
+    score = round(
+
+        max(
+
+            0,
+
             100 -
+
             (
-                breached_categories /
+
+                breached /
+
                 len(budgets)
+
             ) * 100
+
         )
+
     )
 
-    # ----------------------------------
-    # Health Status
-    # ----------------------------------
+    if score >= 90:
 
-    if health_score >= 90:
         status = "Excellent"
 
-    elif health_score >= 75:
+    elif score >= 75:
+
         status = "Good"
 
-    elif health_score >= 60:
+    elif score >= 60:
+
         status = "Needs Improvement"
 
     else:
+
         status = "Poor"
 
     return {
-        "budget_health_score": health_score,
+
+        "budget_health_score": score,
+
         "status": status,
+
         "total_categories": len(budgets),
-        "breached_categories": breached_categories,
-        "budget_details": budget_details
+
+        "breached_categories": breached,
+
+        "budget_details": details
+
     }
+
+
+# ==========================================================
+# Include CRUD Router
+# KEEP THIS AT THE VERY END
+# ==========================================================
+
+router.include_router(
+    budget_crud_router
+)
