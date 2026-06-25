@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>WiseMoney | Budget</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="../css/style.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container-fluid" id="wrapper">
+
+<div class="row">
+
+<div class="col-12 col-md-2" id="sidebar">
+
+    <div class="brand">
+
+        <div class="logo">
+
+            <img src="../assets/wisemoney logo.png"
+                 alt="WiseMoney">
+
+        </div>
+
+        <h1>WiseMoney</h1>
+
+    </div>
+
+    <ul class="nav flex-column nav-menu">
+
+        <li class="nav-item">
+            <a class="nav-link"
+               href="dashboard.html">
+                <i class="fa-solid fa-gauge-high"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+               href="wallets.html">
+                <i class="fa-solid fa-wallet"></i>
+                Wallets
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+               href="transactions.html">
+                <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                Transactions
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+               href="goals.html">
+                <i class="fa-solid fa-bullseye"></i>
+                Goals
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link active"
+               href="budget.html">
+                <i class="fa-solid fa-money-check-dollar"></i>
+                Budget
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+               href="advisor.html">
+                <i class="fa-solid fa-robot"></i>
+                Advisor
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+               href="reports.html">
+                <i class="fa-solid fa-chart-column"></i>
+                Reports
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+               href="financial-health.html">
+                <i class="fa-solid fa-heart-pulse"></i>
+                Financial Health
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+               href="anomaly.html">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Anomaly Detection
+            </a>
+        </li>
+
+    </ul>
+
+    <div class="mt-auto pt-4">
+
+        <button id="logoutBtn"
+                class="btn btn-light w-100 rounded-4">
+
+            <i class="fa-solid fa-right-from-bracket me-2"></i>
+
+            Logout
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- ===========================
+     Main Content
+=========================== -->
+
+<div class="col-12 col-md-10" id="main">
+
+    <div class="topbar page-fade">
+
+        <div class="title">
+
+            <h2>
+
+                <i class="fa-solid fa-money-check-dollar me-2"
+                   style="color:var(--brand)"></i>
+
+                Budget Management
+
+            </h2>
+
+            <p>
+                Create monthly budgets, monitor spending and receive AI recommendations.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================
+         Summary Cards
+    ==================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card-glass p-3">
+
+                <div class="small-muted">
+                    Total Budget
+                </div>
+
+                <h3 id="totalBudget">
+                    ₹0
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card-glass p-3">
+
+                <div class="small-muted">
+                    Total Spent
+                </div>
+
+                <h3 id="totalSpent">
+                    ₹0
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card-glass p-3">
+
+                <div class="small-muted">
+                    Remaining Budget
+                </div>
+
+                <h3 id="remainingBudget">
+                    ₹0
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card-glass p-3">
+
+                <div class="small-muted">
+                    Utilization
+                </div>
+
+                <h3 id="utilization">
+                    0%
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================
+         Create Budget + Health
+    ==================================== -->
+
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+
+            <div class="card-glass p-4">
+
+                <h5 class="mb-3">
+
+                    <i class="fa-solid fa-plus-circle me-2"></i>
+
+                    Create Budget
+
+                </h5>
+
+                <form id="budgetForm">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Category
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="category"
+                            placeholder="Food">
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Monthly Limit
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="monthlyLimit"
+                            placeholder="5000">
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-brand w-100">
+
+                        Create Budget
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- Budget Health -->
+
+        <div class="col-lg-8">
+
+            <div class="card-glass p-4">
+
+                <h5>
+
+                    <i class="fa-solid fa-heart-pulse me-2"></i>
+
+                    Budget Health
+
+                </h5>
+
+                <div class="row mt-3">
+
+                    <div class="col-md-3">
+
+                        <h2 id="healthScore">
+
+                            0
+
+                        </h2>
+
+                        <small class="small-muted">
+
+                            Health Score
+
+                        </small>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <h2 id="healthStatus">
+
+                            --
+
+                        </h2>
+
+                        <small class="small-muted">
+
+                            Status
+
+                        </small>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <h2 id="totalCategories">
+
+                            0
+
+                        </h2>
+
+                        <small class="small-muted">
+
+                            Categories
+
+                        </small>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <h2 id="breachedCategories">
+
+                            0
+
+                        </h2>
+
+                        <small class="small-muted">
+
+                            Breached
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================
+         Budget Table
+    ==================================== -->
+
+    <div class="row mt-4">
+
+        <div class="col-lg-8">
+
+            <div class="card-glass p-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <h5>
+
+                        <i class="fa-solid fa-table me-2"></i>
+
+                        Budget List
+
+                    </h5>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table table-dark align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Category</th>
+
+                                <th>Limit</th>
+
+                                <th>Spent</th>
+
+                                <th>Remaining</th>
+
+                                <th>Progress</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="budgetTableBody">
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="text-center text-secondary">
+
+                                    No budgets available
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Right Side Cards -->
+
+        <div class="col-lg-4">
+
+            <!-- Recommendations -->
+
+            <div class="card-glass p-4 mb-4">
+
+                <h5>
+
+                    <i class="fa-solid fa-lightbulb me-2"></i>
+
+                    AI Recommendations
+
+                </h5>
+
+                <div id="recommendationContainer">
+
+                    <p class="small-muted">
+
+                        No recommendations available.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Breaches -->
+
+            <div class="card-glass p-4">
+
+                <h5>
+
+                    <i class="fa-solid fa-triangle-exclamation me-2 text-warning"></i>
+
+                    Budget Breaches
+
+                </h5>
+
+                <div id="breachContainer">
+
+                    <p class="small-muted">
+
+                        No budget breaches.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ===================================
+     Edit Budget Modal
+=================================== -->
+
+<div class="modal fade"
+     id="editBudgetModal"
+     tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content bg-dark text-white">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    Edit Budget
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input
+                    type="hidden"
+                    id="editBudgetId">
+
+                <div class="mb-3">
+
+                    <label class="form-label" for="editCategory">
+
+                        Category
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editCategory"
+                        class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label" for="editLimit">
+
+                        Monthly Limit
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editLimit"
+                        class="form-control">
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    id="saveBudgetBtn"
+                    class="btn btn-brand">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="../js/api.js"></script>
+
+<script src="../js/auth.js"></script>
+
+<script src="../js/budget.js"></script>
+
+</body>
+
+</html>
