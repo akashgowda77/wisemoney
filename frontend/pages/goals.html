@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WiseMoney | Financial Goals</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+<div class="container-fluid" id="wrapper">
+<div class="row">
+
+    <!-- ========================================================= -->
+    <!-- Sidebar -->
+    <!-- ========================================================= -->
+
+    <div class="col-lg-2 col-md-3" id="sidebar">
+
+        <div class="brand">
+
+            <div class="logo">
+                <img src="../assets/wisemoney logo.png" alt="WiseMoney">
+            </div>
+
+            <h1>WiseMoney</h1>
+
+        </div>
+
+        <ul class="nav flex-column nav-menu">
+
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard.html">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="wallets.html">
+                    <i class="fa-solid fa-wallet"></i>
+                    Wallets
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="transactions.html">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                    Transactions
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link active" href="goals.html">
+                    <i class="fa-solid fa-bullseye"></i>
+                    Goals
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="budget.html">
+                    <i class="fa-solid fa-money-check-dollar"></i>
+                    Budget
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="advisor.html">
+                    <i class="fa-solid fa-robot"></i>
+                    Advisor
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="reports.html">
+                    <i class="fa-solid fa-chart-column"></i>
+                    Reports
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="financial-health.html">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    Financial Health
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="anomaly.html">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Anomaly Detection
+                </a>
+            </li>
+
+        </ul>
+
+        <div class="mt-auto pt-4">
+
+            <button
+                id="logoutBtn"
+                class="btn btn-light w-100 rounded-4">
+
+                <i class="fa-solid fa-right-from-bracket me-2"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- Main Content -->
+    <!-- ========================================================= -->
+
+    <div class="col-lg-10 col-md-9" id="main">
+
+        <!-- Header -->
+
+        <div class="topbar page-fade">
+
+            <div class="title">
+
+                <h2>
+
+                    <i class="fa-solid fa-bullseye me-2"
+                        style="color: var(--brand);"></i>
+
+                    Financial Goals
+
+                </h2>
+
+                <p>
+                    Track, fund and achieve your financial goals with intelligent insights.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- Goal Statistics -->
+        <!-- ========================================================= -->
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-lg-3">
+
+                <div class="card-glass p-3">
+
+                    <div class="small-muted">
+                        Total Goals
+                    </div>
+
+                    <h2 id="totalGoals" class="mt-2">
+                        0
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="card-glass p-3">
+
+                    <div class="small-muted">
+                        Active Goals
+                    </div>
+
+                    <h2 id="activeGoals" class="mt-2">
+                        0
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="card-glass p-3">
+
+                    <div class="small-muted">
+                        Achieved Goals
+                    </div>
+
+                    <h2 id="completedGoals" class="mt-2">
+                        0
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <div class="card-glass p-3">
+
+                    <div class="small-muted">
+                        Overall Progress
+                    </div>
+
+                    <h2 id="overallProgress" class="mt-2">
+                        0%
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- Create Goal + Goals List -->
+        <!-- ========================================================= -->
+
+        <div class="row g-4">
+
+            <!-- ================================================ -->
+            <!-- Create Goal -->
+            <!-- ================================================ -->
+
+            <div class="col-lg-4">
+
+                <div class="card-glass p-4">
+
+                    <h4 class="mb-4">
+
+                        <i class="fa-solid fa-plus-circle me-2"></i>
+
+                        Create New Goal
+
+                    </h4>
+
+                    <form id="createGoalForm">
+
+                        <div class="mb-3">
+
+                            <label class="form-label" for="goalName">
+
+                                Goal Name
+
+                            </label>
+
+                            <input
+                                type="text"
+                                id="goalName"
+                                class="form-control"
+                                placeholder="Ex: Buy New Laptop"
+                                required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label" for="targetAmount">
+
+                                Target Amount
+
+                            </label>
+
+                            <input
+                                type="number"
+                                id="targetAmount"
+                                class="form-control"
+                                placeholder="50000"
+                                min="1"
+                                required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label" for="currentSavings">
+
+                                Current Savings
+
+                            </label>
+
+                            <input
+                                type="number"
+                                id="currentSavings"
+                                class="form-control"
+                                placeholder="0"
+                                value="0"
+                                min="0">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label" for="goalPriority">
+
+                                Priority
+
+                            </label>
+
+                            <select
+                                id="goalPriority"
+                                class="form-select">
+
+                                <option value="low">
+                                    Low
+                                </option>
+
+                                <option value="medium" selected>
+                                    Medium
+                                </option>
+
+                                <option value="high">
+                                    High
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label">
+
+                                Notes
+
+                            </label>
+
+                            <textarea
+                                id="goalNotes"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Optional notes about this goal..."></textarea>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-brand w-100">
+
+                            <i class="fa-solid fa-circle-plus me-2"></i>
+
+                            Create Goal
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- ================================================ -->
+            <!-- Goals Table -->
+            <!-- ================================================ -->
+
+            <div class="col-lg-8">
+
+                <div class="card-glass p-4">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-center
+                                mb-4">
+
+                        <h4 class="mb-0">
+
+                            <i class="fa-solid fa-list-check me-2"></i>
+
+                            Your Goals
+
+                        </h4>
+
+                        <span
+                            id="goalCountBadge"
+                            class="badge bg-primary">
+
+                            0 Goals
+
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="table-responsive">
+
+                        <table
+                            class="table table-dark
+                                   table-hover
+                                   align-middle">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Goal</th>
+
+                                    <th>Target</th>
+
+                                    <th>Saved</th>
+
+                                    <th>Progress</th>
+
+                                    <th>Status</th>
+
+                                    <th>Priority</th>
+
+                                    <th>Actions</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="goalsTableBody">
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div
+                        id="emptyGoals"
+                        class="text-center py-5"
+                        style="display:none;">
+
+                        <i
+                            class="fa-solid fa-bullseye fa-3x mb-3"
+                            style="opacity:.4;"></i>
+
+                        <h5>
+
+                            No Goals Created
+
+                        </h5>
+
+                        <p class="small-muted">
+
+                            Start by creating your first financial goal.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- Goal Progress Modal -->
+        <!-- ========================================================= -->
+
+        <div
+            class="modal fade"
+            id="progressModal"
+            tabindex="-1"
+            aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+
+                <div
+                    class="modal-content"
+                    style="
+                        background:#101827;
+                        color:white;
+                        border-radius:20px;
+                    ">
+
+                    <div class="modal-header border-0">
+
+                        <h5
+                            class="modal-title"
+                            id="progressTitle">
+
+                            Goal Progress
+
+                        </h5>
+
+                        <button
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+                    <div
+                        class="modal-body"
+                        id="progressBody">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- Fund Goal Modal -->
+        <!-- ========================================================= -->
+
+        <div
+            class="modal fade"
+            id="fundGoalModal"
+            tabindex="-1"
+            aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+
+                <div
+                    class="modal-content"
+                    style="
+                        background:#101827;
+                        color:white;
+                        border-radius:20px;
+                    ">
+
+                    <div class="modal-header border-0">
+
+                        <h5 class="modal-title">
+
+                            Fund Goal
+
+                        </h5>
+
+                        <button
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                        <input
+                            type="hidden"
+                            id="fundGoalId">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Select Wallet
+
+                            </label>
+
+                            <select
+                                id="fundWallet"
+                                class="form-select">
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label">
+
+                                Amount
+
+                            </label>
+
+                            <input
+                                type="number"
+                                id="fundAmount"
+                                class="form-control"
+                                placeholder="Enter amount">
+
+                        </div>
+
+                        <button
+                            id="confirmFundBtn"
+                            class="btn btn-success w-100">
+
+                            <i class="fa-solid fa-money-bill-wave me-2"></i>
+
+                            Fund Goal
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- Delete Goal Modal -->
+        <!-- ========================================================= -->
+
+        <div
+            class="modal fade"
+            id="deleteGoalModal"
+            tabindex="-1"
+            aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+
+                <div
+                    class="modal-content"
+                    style="
+                        background:#101827;
+                        color:white;
+                        border-radius:20px;
+                    ">
+
+                    <div class="modal-header border-0">
+
+                        <h5 class="modal-title">
+
+                            Delete Goal
+
+                        </h5>
+
+                        <button
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                        <p>
+
+                            Are you sure you want to delete this goal?
+
+                        </p>
+
+                        <input
+                            type="hidden"
+                            id="deleteGoalId">
+
+                        <button
+                            id="confirmDeleteBtn"
+                            class="btn btn-danger w-100">
+
+                            <i class="fa-solid fa-trash me-2"></i>
+
+                            Delete Goal
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- Bootstrap -->
+<!-- ========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ========================================================= -->
+<!-- WiseMoney -->
+<!-- ========================================================= -->
+
+<script src="../js/api.js"></script>
+
+<script src="../js/auth.js"></script>
+
+<script src="../js/goals.js"></script>
+
+</body>
+
+</html>

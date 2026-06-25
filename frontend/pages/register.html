@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WiseMoney | Register</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="container">
+      <div class="brand-hero page-fade">
+        <img src="../assets/wisemoney logo.png" alt="WiseMoney" />
+        <h1>WiseMoney</h1>
+        <p>Secure registration in seconds.</p>
+      </div>
+
+      <div class="auth-card card-glass page-fade">
+        <h3 class="mb-3" style="font-weight:900; letter-spacing:.2px;">
+          <i class="fa-solid fa-user-plus me-2" style="color:var(--brand);"></i>Register
+        </h3>
+
+        <form id="registerForm">
+          <div class="mb-3 field">
+            <label class="form-label">Name</label>
+            <input id="name" type="text" class="form-control" placeholder="Your name" required />
+          </div>
+
+          <div class="mb-3 field">
+            <label class="form-label">Email</label>
+            <input id="regEmail" type="email" class="form-control" placeholder="you@example.com" required />
+          </div>
+
+          <div class="mb-4 field">
+            <label class="form-label">Password</label>
+            <input id="regPassword" type="password" class="form-control" placeholder="Create a password" required />
+          </div>
+
+          <button class="btn btn-brand w-100 rounded-4" type="submit">
+            <i class="fa-solid fa-wand-magic-sparkles me-2"></i>
+            Create account
+          </button>
+
+          <div class="small-muted text-center mt-3">
+            Already have an account? <a href="login.html" style="color:rgba(255,255,255,.92); font-weight:800;">Login</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>
+
