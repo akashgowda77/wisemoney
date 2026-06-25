@@ -33,12 +33,16 @@ router = APIRouter()
 # Get current user
 from auth import get_current_user
 
+
+
 # Create expense
 @router.post("/", response_model=ExpenseResponse)
 def create_expense(expense: ExpenseCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    
+    category = expense.category.strip().title()
     new_expense = Expense(
         amount=expense.amount,
-        category=expense.category,
+        category=category,
         date=expense.date,
         user_id=current_user.id,
         wallet_id=expense.wallet_id
@@ -48,8 +52,8 @@ def create_expense(expense: ExpenseCreate, db: Session = Depends(get_db), curren
     transaction = Transaction(
         amount=expense.amount,
         transaction_type="expense",
-        category=expense.category,
-        description=f"Expense - {expense.category}",
+        category=category,
+        description=f"Expense - {category}",
         wallet_id=expense.wallet_id,
         user_id=current_user.id
     )
