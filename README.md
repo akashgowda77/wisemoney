@@ -1,116 +1,189 @@
-# wisemoney
-A smart, data-driven personal finance and spending insight platform.
-# 💰 WiseMoney – AI-Powered Personal Finance Management System
+# 💰 WiseMoney – AI-Powered Personal Finance Management Platform
 
-WiseMoney is a full-stack personal finance management platform that helps users track income, expenses, wallets, financial goals, and spending behavior through an intelligent analytics dashboard.
-
-The platform combines financial tracking with AI-driven insights to help users improve savings habits, monitor financial health, and make informed financial decisions.
+> **WiseMoney** is a full-stack AI-powered personal finance management platform that helps users track income, expenses, wallets, budgets, savings goals, and financial health while providing intelligent financial insights and spending recommendations.
 
 ---
 
-## 🚀 Features
+## 🌟 Overview
 
-### 🔐 Secure Authentication
+Managing personal finances can be challenging when income, expenses, savings, and financial goals are scattered across multiple sources.
 
-* User Registration
-* User Login
-* JWT-based Authentication
+**WiseMoney** solves this problem by bringing everything together into a single intelligent platform where users can:
+
+* Track income and expenses
+* Manage multiple wallets
+* Plan monthly budgets
+* Monitor financial goals
+* Analyze spending behavior
+* Detect unusual transactions
+* Receive AI-powered financial recommendations
+* Visualize financial reports and trends
+
+---
+
+# ✨ Key Features
+
+## 🔐 Authentication
+
+* Secure User Registration
+* JWT-based Login
 * Protected API Endpoints
+* User-specific Financial Data
 
-### 💵 Income Management
+---
 
-* Add Income Records
-* Track Multiple Income Sources
-* Income History Management
+## 💵 Income Management
 
-### 💸 Expense Management
+* Add Income
+* Multiple Income Sources
+* Wallet Selection
+* Automatic Wallet Balance Update
+* Income History
+
+---
+
+## 💸 Expense Management
 
 * Add Expenses
-* Categorize Spending
-* Expense Tracking and Analysis
-
-### 👛 Wallet Management
-
-* Multiple Wallet Support
-* Real-Time Balance Updates
-* Automatic Balance Adjustments
-
-### 🎯 Goal Tracking
-
-* Create Financial Goals
-* Monitor Goal Progress
-* Savings Tracking
-* Goal Achievement Analytics
-
-### 📊 Smart Dashboard
-
-* Total Income Overview
-* Total Expense Overview
-* Wallet Balance Monitoring
-* Financial Score Calculation
-* Expense Distribution Visualization
-
-### 🤖 AI Financial Advisor
-
-* Personalized Recommendations
-* Spending Pattern Analysis
-* Goal Progress Evaluation
-* Savings Suggestions
-* Emergency Fund Guidance
-
-### 📈 Financial Reports
-
-* Financial Summary Reports
-* Trend Analysis
-* Forecast Generation
-* Data Export Functionality
+* Category-based Expense Tracking
+* Wallet Selection
+* Automatic Wallet Balance Deduction
+* Transaction History
 
 ---
 
-## 🏗️ System Architecture
+## 👛 Wallet Management
+
+* Multiple Wallets
+* Real-time Balance Tracking
+* Wallet-to-Wallet Transfers
+* Automatic Balance Updates
+
+---
+
+## 🎯 Goal Tracking
+
+* Create Financial Goals
+* Goal Progress Tracking
+* Goal Funding
+* Goal Achievement Status
+
+---
+
+## 📊 Budget Intelligence
+
+* Monthly Budgets
+* Budget Utilization
+* Remaining Budget
+* Budget Health Score
+* Budget Recommendations
+* Budget Breach Detection
+
+---
+
+## 📈 Financial Dashboard
+
+* Total Income
+* Total Expenses
+* Wallet Balance
+* Savings Overview
+* Financial Score
+* Monthly Trends
+* Expense Distribution
+
+---
+
+## 🤖 AI Financial Advisor
+
+WiseMoney provides intelligent recommendations based on user spending.
+
+Examples:
+
+* Reduce unnecessary expenses
+* Improve savings habits
+* Emergency fund suggestions
+* Spending optimization
+* Personalized financial advice
+
+---
+
+## 📄 Financial Reports
+
+* Financial Summary
+* Monthly Trend Analysis
+* Expense Forecasting
+* Export Reports (CSV)
+
+---
+
+## ❤️ Financial Health
+
+* Financial Health Score
+* Savings Analysis
+* Spending Quality
+* Overall Financial Wellness
+
+---
+
+## 🚨 Anomaly Detection
+
+Automatically detects:
+
+* Unusual Expenses
+* Spending Outliers
+* Abnormal Financial Behaviour
+
+---
+
+# 🏗️ System Architecture
 
 ```text
-Frontend (HTML, CSS, Bootstrap, JavaScript)
-                    │
-                    ▼
-           FastAPI Backend
-                    │
-                    ▼
-          SQLAlchemy ORM
-                    │
-                    ▼
-              SQLite DB
+                  Frontend
+        HTML • CSS • Bootstrap • JS
+                     │
+                     ▼
+             FastAPI Backend
+                     │
+                     ▼
+            SQLAlchemy ORM
+                     │
+                     ▼
+               SQLite Database
 ```
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠 Tech Stack
 
-### Frontend
+## Frontend
 
 * HTML5
 * CSS3
 * Bootstrap 5
-* JavaScript
+* JavaScript (ES6)
 * Chart.js
 * Font Awesome
 
-### Backend
+---
 
-* FastAPI
+## Backend
+
 * Python
+* FastAPI
 * SQLAlchemy
 * Pydantic
 * JWT Authentication
 * Uvicorn
 
-### Database
+---
+
+## Database
 
 * SQLite
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```text
 WiseMoney
@@ -119,20 +192,27 @@ WiseMoney
 ├── main.py
 ├── database.py
 ├── models.py
+│
 ├── income.py
 ├── expense.py
 ├── wallet.py
+├── transaction.py
+│
 ├── goals.py
+├── budget.py
+├── budget_crud.py
 ├── dashboard.py
 ├── advisor.py
-├── insights.py
 ├── report.py
-├── transaction.py
+├── anomaly.py
+├── insights.py
+├── financial_health.py
 │
 ├── frontend/
 │   ├── pages/
 │   ├── css/
 │   ├── js/
+│   └── assets/
 │
 ├── requirements.txt
 └── README.md
@@ -140,36 +220,36 @@ WiseMoney
 
 ---
 
-## ⚙️ Installation
+# ⚙️ Installation
 
-### Clone Repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/akashgowda77/wisemoney.git
 cd wisemoney
 ```
 
-### Create Virtual Environment
+---
+
+## Create Virtual Environment
+
+### Windows
 
 ```bash
 python -m venv venv
-```
-
-### Activate Environment
-
-#### Windows
-
-```bash
 venv\Scripts\activate
 ```
 
-#### Linux / Mac
+### Linux / macOS
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-### Install Dependencies
+---
+
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -177,94 +257,77 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Run Backend
+# ▶️ Run Backend
 
 ```bash
-python -m uvicorn main:app --reload
+uvicorn main:app --reload
 ```
 
-Backend URL:
+Backend
 
-```text
+```
 http://127.0.0.1:8000
 ```
 
-Swagger Documentation:
+Swagger API
 
-```text
+```
 http://127.0.0.1:8000/docs
 ```
 
 ---
 
-## ▶️ Run Frontend
+# ▶️ Run Frontend
 
 ```bash
 cd frontend
 python -m http.server 5500
 ```
 
-Frontend URL:
+Open
 
-```text
+```
 http://localhost:5500/pages/login.html
 ```
 
 ---
 
-## 📊 Core Modules
+# 📊 Core Modules
 
-### Authentication
-
-* JWT Login
-* User Registration
-* Secure API Access
-
-### Transactions
-
-* Income Recording
-* Expense Recording
-* Financial Tracking
-
-### Dashboard
-
-* Financial KPIs
-* Charts and Analytics
-* Financial Score
-
-### Goals
-
-* Savings Goals
-* Progress Monitoring
-* Goal Achievement Metrics
-
-### Advisor
-
-* AI-Powered Financial Recommendations
-* Spending Analysis
-* Savings Optimization
-
-### Reports
-
-* Financial Summaries
-* Trend Analysis
-* Forecast Reports
+| Module            | Description                        |
+| ----------------- | ---------------------------------- |
+| Authentication    | Secure JWT Authentication          |
+| Dashboard         | Financial Overview                 |
+| Wallet            | Multi-wallet Management            |
+| Income            | Income Tracking                    |
+| Expense           | Expense Tracking                   |
+| Transactions      | Financial Ledger                   |
+| Goals             | Savings Goal Management            |
+| Budget            | Budget Planning & Monitoring       |
+| Reports           | Reports & Forecasting              |
+| Financial Health  | Financial Wellness Analysis        |
+| AI Advisor        | Personalized Recommendations       |
+| Anomaly Detection | Fraud & Spending Outlier Detection |
 
 ---
 
-## 🔮 Future Enhancements
+# 🔮 Future Enhancements
 
 * Bank Account Integration
-* UPI Transaction Sync
-* AI Chat Assistant
-* Budget Planning Engine
-* Investment Recommendations
+* UPI Synchronization
 * Mobile Application
 * Cloud Deployment
-* Multi-Currency Support
+* OCR Bill Scanner
+* Investment Portfolio Tracking
+* AI Chat Assistant
+* Voice-based Expense Entry
+* Multi-currency Support
+* Notification & Email Alerts
 
 ---
 
-## ⭐ Project Goal
+# 🎯 Project Goal
 
-WiseMoney aims to simplify personal finance management through intelligent analytics, financial goal tracking, and AI-powered recommendations that help users make smarter financial decisions.
+WiseMoney aims to make personal finance management smarter through AI-powered analytics, budgeting, financial health monitoring, anomaly detection, and intelligent recommendations, enabling users to make informed financial decisions and improve long-term financial well-being.
+
+
