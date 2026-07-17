@@ -219,7 +219,14 @@ def fund_goal(
             status_code=400,
             detail="Goal already achieved"
         )
-
+    
+    remaining_needed = goal.target_amount - goal.current_savings
+    if funding.amount > remaining_needed:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Funding amount ({funding.amount}) exceeds the remaining required amount ({remaining_needed}) to achieve this goal."
+        )
+    
     wallet = (
         db.query(Wallet)
         .filter(
@@ -293,7 +300,44 @@ def delete_goal(
         )
         .first()
     )
+    
+    # 1. Query the ledger for all transaction records funding this goal
+    funding_transactions = db.query(Transaction).filter(
+        Transaction.user_id == current_user.id,
+        Transaction.transaction_type == "goal_funding",
+        Transaction.description == f"Funded goal: {goal.goal_name}"
+    ).all()
 
+    # 2. Refund each transaction's amount back to its original wallet
+    for tx in funding_transactions:
+        # Find original wallet
+        wallet = db.query(Wallet).filter(Wallet.id == tx.wallet_id, Wallet.user_id == current_user.id).first()
+        if wallet:
+            wallet.balance += tx.amount
+            # Log the refund in the central ledger
+            refund_tx = Transaction(
+                amount=tx.amount,
+                transaction_type="income",
+                category="Goal Refund",
+                description=f"Refund from deleted goal: {goal.goal_name}",
+                wallet_id=wallet.id,
+                user_id=current_user.id
+            )
+            db.add(refund_tx)
+        else:
+            # Fallback: if the original wallet was deleted, refund to the first active wallet
+            fallback_wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+            if fallback_wallet:
+                fallback_wallet.balance += tx.amount
+                refund_tx = Transaction(
+                    amount=tx.amount,
+                    transaction_type="income",
+                    category="Goal Refund",
+                    description=f"Refund from deleted goal (fallback): {goal.goal_name}",
+                    wallet_id=fallback_wallet.id,
+                    user_id=current_user.id
+                )
+                db.add(refund_tx)
     if not goal:
         raise HTTPException(
             status_code=404,
