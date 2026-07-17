@@ -197,20 +197,6 @@ def budget_health(
             "budget_details": []
 
         }
-    
-    start, end = month_range()
-
-    for budget in budgets:
-        spent = (
-            db.query(func.sum(Expense.amount))
-            .filter(
-                Expense.user_id == current_user.id,
-                Expense.category == budget.category,
-                Expense.date >= start,  # <-- Added month start filter
-                Expense.date < end     # <-- Added month end filter
-            )
-            .scalar() or 0
-        )
         
     breached = 0
 
