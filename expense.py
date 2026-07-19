@@ -63,6 +63,12 @@ def create_expense(expense: ExpenseCreate, db: Session = Depends(get_db), curren
     if expense.wallet_id:
         from models import Wallet
         wallet = db.query(Wallet).filter(Wallet.id == expense.wallet_id, Wallet.user_id == current_user.id).first()
+        if wallet.balance < expense.amount:
+            raise HTTPException(
+                status_code=400, 
+                detail="Insufficient wallet balance to log this expense"
+            )
+        
         if wallet:
             wallet.balance -= expense.amount
         else:
