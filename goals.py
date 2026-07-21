@@ -317,7 +317,7 @@ def delete_goal(
             # Log the refund in the central ledger
             refund_tx = Transaction(
                 amount=tx.amount,
-                transaction_type="income",
+                transaction_type="goal-refund",
                 category="Goal Refund",
                 description=f"Refund from deleted goal: {goal.goal_name}",
                 wallet_id=wallet.id,
