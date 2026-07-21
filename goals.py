@@ -331,7 +331,7 @@ def delete_goal(
                 fallback_wallet.balance += tx.amount
                 refund_tx = Transaction(
                     amount=tx.amount,
-                    transaction_type="income",
+                    transaction_type="goal-refund",
                     category="Goal Refund",
                     description=f"Refund from deleted goal (fallback): {goal.goal_name}",
                     wallet_id=fallback_wallet.id,
