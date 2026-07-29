@@ -26,14 +26,30 @@ class ExpenseForecaster:
         return df
 
     def train_model(self):
+        if self.model is None:
+            return None, "Model not loaded"
         df = self.get_data()
         if df.empty:
             return None, "Not enough data"
 
-        # Aggregate by day
-        daily_expenses = df.groupby('date')['amount'].sum().reset_index()
+        # 1. Aggregate expenses by day
+        daily_expenses = df.groupby('date')['amount'].sum().to_frame()
         
-        # Prepare features (convert date to ordinal)
+        # 2. Generate a complete date range from the first expense to the last expense
+        min_date = daily_expenses.index.min()
+        max_date = daily_expenses.index.max()
+        
+        # If the user only has 1 day of expenses, we can't build a range
+        if min_date == max_date:
+            return None, "Need expenses spanning multiple days"
+            
+        complete_range = pd.date_range(start=min_date, end=max_date, freq='D')
+        
+        # 3. Reindex the DataFrame to fill missing dates with 0.0
+        daily_expenses = daily_expenses.reindex(complete_range, fill_value=0.0).reset_index()
+        daily_expenses.rename(columns={'index': 'date'}, inplace=True)
+        
+        # 4. Prepare features (convert dates to ordinals)
         daily_expenses['date_ordinal'] = daily_expenses['date'].apply(lambda x: x.toordinal())
         
         X = daily_expenses[['date_ordinal']]
