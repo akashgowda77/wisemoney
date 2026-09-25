@@ -22,7 +22,7 @@ from models import (
 )
 
 # Import CRUD router
-from budget_crud import router as budget_crud_router
+from budget_crud import router as budget_crud_router, month_range
 
 router = APIRouter()
 
@@ -198,6 +198,8 @@ def budget_health(
 
         }
 
+    start, end = month_range()
+
     breached = 0
 
     details = []
@@ -214,7 +216,11 @@ def budget_health(
 
                 Expense.user_id == current_user.id,
 
-                Expense.category == budget.category
+                Expense.category == budget.category,
+
+                Expense.date >= start,
+
+                Expense.date < end
 
             )
 

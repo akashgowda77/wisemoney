@@ -29,6 +29,34 @@ router = APIRouter()
 
 
 # ==================================================
+# Dynamic Contamination Helper (Standard Deviation)
+# ==================================================
+
+def get_dynamic_contamination(amounts: list) -> float:
+    """
+    Calculates dynamic contamination rate for Isolation Forest
+    based on Standard Deviation (Z-score > 2.0).
+    Prevents false positives when spending is consistent.
+    """
+    if not amounts or len(amounts) < 5:
+        return 0.1
+
+    s = pd.Series(amounts)
+    mean_val = s.mean()
+    std_val = s.std()
+
+    if std_val == 0 or pd.isna(std_val):
+        return 0.01  # All transactions identical, minimal anomaly rate
+
+    # Count transactions exceeding 2 standard deviations above mean
+    outliers_count = (s > (mean_val + 2 * std_val)).sum()
+    calculated_rate = outliers_count / len(s)
+
+    # Scikit-learn requires 0 < contamination <= 0.5
+    return max(0.01, min(0.30, calculated_rate))
+
+
+# ==================================================
 # Detect Spending Anomalies
 # ==================================================
 
@@ -39,7 +67,7 @@ def detect_anomalies(
 ):
     """
     Detect unusual expenses using
-    Isolation Forest.
+    Isolation Forest with Dynamic Contamination.
     """
 
     expenses = (
@@ -66,8 +94,10 @@ def detect_anomalies(
         columns=["amount"]
     )
 
+    contamination_rate = get_dynamic_contamination(amounts)
+
     model = IsolationForest(
-        contamination=0.1,
+        contamination=contamination_rate,
         random_state=42
     )
 
@@ -169,8 +199,10 @@ def anomaly_summary(
         columns=["amount"]
     )
 
+    contamination_rate = get_dynamic_contamination(amounts)
+
     model = IsolationForest(
-        contamination=0.1,
+        contamination=contamination_rate,
         random_state=42
     )
 
@@ -248,8 +280,10 @@ def largest_anomaly(
         columns=["amount"]
     )
 
+    contamination_rate = get_dynamic_contamination(amounts)
+
     model = IsolationForest(
-        contamination=0.1,
+        contamination=contamination_rate,
         random_state=42
     )
 

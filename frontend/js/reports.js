@@ -30,11 +30,27 @@ function toCSV(rows, headers) {
 async function initReportsPage() {
   WiseMoneyAuth.requireAuth();
 
-  let [summary, trend, forecast] = await Promise.all([
-    WiseMoneyAPI.apiGet("/report/summary"),
-    WiseMoneyAPI.apiGet("/report/trend"),
-    WiseMoneyAPI.apiGet("/report/forecast?days=30"),
-  ]);
+  let summary = {};
+  let trend = [];
+  let forecast = { forecast: [] };
+
+  try {
+    summary = await WiseMoneyAPI.apiGet("/report/summary");
+  } catch (err) {
+    console.error("Error loading summary:", err);
+  }
+
+  try {
+    trend = await WiseMoneyAPI.apiGet("/report/trend");
+  } catch (err) {
+    console.error("Error loading trend:", err);
+  }
+
+  try {
+    forecast = await WiseMoneyAPI.apiGet("/report/forecast?days=30");
+  } catch (err) {
+    console.error("Error loading forecast:", err);
+  }
 
   // Keep backward compatibility with older keys (if any)
   summary = summary || {};

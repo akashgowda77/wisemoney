@@ -7,6 +7,8 @@ from models import (
     Budget,
     Expense
 )
+from budget_crud import month_range
+
 
 
 class FinancialEngine:
@@ -140,13 +142,17 @@ class FinancialEngine:
 
         budget_score = 20
 
+        start, end = month_range()
+
         for budget in budgets:
 
             spent = (
                 db.query(func.sum(Expense.amount))
                 .filter(
                     Expense.user_id == current_user.id,
-                    Expense.category == budget.category
+                    Expense.category == budget.category,
+                    Expense.date >= start,
+                    Expense.date < end
                 )
                 .scalar()
                 or 0

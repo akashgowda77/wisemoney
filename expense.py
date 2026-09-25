@@ -64,6 +64,8 @@ def create_expense(expense: ExpenseCreate, db: Session = Depends(get_db), curren
         from models import Wallet
         wallet = db.query(Wallet).filter(Wallet.id == expense.wallet_id, Wallet.user_id == current_user.id).first()
         if wallet:
+            if wallet.balance < expense.amount:
+                raise HTTPException(status_code=400, detail="Insufficient wallet balance")
             wallet.balance -= expense.amount
         else:
             raise HTTPException(status_code=404, detail="Wallet not found")

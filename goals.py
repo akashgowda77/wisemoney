@@ -220,6 +220,14 @@ def fund_goal(
             detail="Goal already achieved"
         )
 
+    remaining_needed = goal.target_amount - goal.current_savings
+    if funding.amount > remaining_needed:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Funding amount ({funding.amount}) exceeds the remaining required amount ({remaining_needed}) to achieve this goal."
+        )
+
+
     wallet = (
         db.query(Wallet)
         .filter(
@@ -300,9 +308,45 @@ def delete_goal(
             detail="Goal not found"
         )
 
+    # Refund goal savings back to the wallets they came from
+    funding_transactions = db.query(Transaction).filter(
+        Transaction.user_id == current_user.id,
+        Transaction.transaction_type == "goal_funding",
+        Transaction.description == f"Funded goal: {goal.goal_name}"
+    ).all()
+
+    for tx in funding_transactions:
+        # Find original wallet
+        wallet = db.query(Wallet).filter(Wallet.id == tx.wallet_id, Wallet.user_id == current_user.id).first()
+        if wallet:
+            wallet.balance += tx.amount
+            refund_tx = Transaction(
+                amount=tx.amount,
+                transaction_type="goal_refund",
+                category="Goal Refund",
+                description=f"Refund from deleted goal: {goal.goal_name}",
+                wallet_id=wallet.id,
+                user_id=current_user.id
+            )
+            db.add(refund_tx)
+        else:
+            # Fallback to first active wallet if original wallet was deleted
+            fallback_wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+            if fallback_wallet:
+                fallback_wallet.balance += tx.amount
+                refund_tx = Transaction(
+                    amount=tx.amount,
+                    transaction_type="goal_refund",
+                    category="Goal Refund",
+                    description=f"Refund from deleted goal (fallback): {goal.goal_name}",
+                    wallet_id=fallback_wallet.id,
+                    user_id=current_user.id
+                )
+                db.add(refund_tx)
+
     db.delete(goal)
     db.commit()
 
     return {
-        "message": "Goal deleted successfully"
+        "message": "Goal deleted successfully and savings refunded to wallets."
     }

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
@@ -35,6 +35,20 @@ def create_transaction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    from models import Wallet
+    # 1. Fetch and verify wallet ownership
+    wallet = db.query(Wallet).filter(Wallet.id == transaction.wallet_id, Wallet.user_id == current_user.id).first()
+    if not wallet:
+        raise HTTPException(status_code=404, detail="Wallet not found")
+
+    # 2. Update wallet balance based on transaction type
+    if transaction.transaction_type == "income":
+        wallet.balance += transaction.amount
+    elif transaction.transaction_type == "expense":
+        if wallet.balance < transaction.amount:
+            raise HTTPException(status_code=400, detail="Insufficient wallet balance")
+        wallet.balance -= transaction.amount
+
     new_transaction = Transaction(
         amount=transaction.amount,
         transaction_type=transaction.transaction_type,
